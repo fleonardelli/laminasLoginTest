@@ -6,6 +6,7 @@ namespace Auth\Service\Factory;
 
 use Interop\Container\ContainerInterface;
 use Laminas\Authentication\AuthenticationService;
+use Laminas\Config\Config;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Auth\Service\Auth;
 
@@ -27,7 +28,8 @@ class AuthFactory implements FactoryInterface
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $authService = $container->get(AuthenticationService::class);
+        $config = $container->get('configuration');
 
-        return new Auth($entityManager, $authService);
+        return new Auth($entityManager, $authService, $config['access_filter']);
     }
 }

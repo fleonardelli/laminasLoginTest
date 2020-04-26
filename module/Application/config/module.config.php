@@ -43,4 +43,15 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    'access_filter' => [
+        'options' => [
+            'mode' => 'restrictive'
+        ],
+        'controllers' => [
+            Controller\IndexController::class => [
+                // allow @ is only for authenticated. * is public.
+                ['actions' => ['index'], 'allow' => '@']
+            ],
+        ],
+    ],
 ];
