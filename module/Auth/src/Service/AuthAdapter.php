@@ -4,10 +4,8 @@
 namespace Auth\Service;
 
 
-use Auth\Controller\Exception\InvalidPasswordException;
 use Auth\Entity\User as UserEntity;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityNotFoundException;
 use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Authentication\Result;
 use Laminas\Crypt\Password\Bcrypt;

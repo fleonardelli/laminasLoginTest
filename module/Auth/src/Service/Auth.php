@@ -59,7 +59,7 @@ class Auth
         $authAdapter->setUsername($username);
         $authAdapter->setPassword($password);
 
-        return $authAdapter->authenticate();
+        return $this->authService->authenticate($authAdapter);
     }
 
     /**
@@ -90,7 +90,8 @@ class Auth
 
         if (!in_array($mode, ['restrictive', 'permissive'])) {
 
-            throw new \Exception('Invalid access filter mode (expected either restrictive or permissive mode');
+            throw new \InvalidArgumentException(
+                'Invalid access filter mode (expected either restrictive or permissive mode');
         }
 
         if (isset($this->config['controllers'][$controllerName])) {
@@ -102,12 +103,12 @@ class Auth
 
                 if (is_array($actionList) &&
                     in_array($actionName, $actionList) ||
-                    $actionList=='*'
+                    '*' == $actionList
                 ) {
-                    if ($allow == '*')
+                    if ('*' == $allow)
 
                         return true;
-                    else if ($allow=='@' && $this->authService->hasIdentity()) {
+                    else if ('@' == $allow && $this->authService->hasIdentity()) {
 
                         return true;
                     } else {
@@ -118,7 +119,7 @@ class Auth
             }
         }
 
-        if ($mode=='restrictive' && !$this->authService->hasIdentity()) {
+        if ('restrictive' == $mode && !$this->authService->hasIdentity()) {
 
             return false;
         }
