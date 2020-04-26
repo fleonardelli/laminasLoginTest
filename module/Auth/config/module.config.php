@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace Auth;
 
 use Auth\Controller\Factory\AuthControllerFactory;
-use Auth\Service\Factory\UserFactory;
-use Auth\Service\User;
+use Auth\Service\AuthAdapter;
+use Auth\Service\Factory\AuthAdapterFactory;
+use Auth\Service\Factory\AuthenticationServiceFactory;
+use Auth\Service\Factory\AuthFactory;
+use Auth\Service\Auth;
+use Laminas\Authentication\AuthenticationService;
 use Laminas\Router\Http\Literal;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 
 return [
     'router' => [
         'routes' => [
-            'home' => [
+            'login' => [
                 'type'    => Literal::class,
                 'options' => [
-                    'route'    => '/',
+                    'route'    => '/login',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
                         'action'     => 'login',
@@ -32,10 +36,13 @@ return [
     ],
     'service_manager' => [
       'factories' => [
-          User::class => UserFactory::class,
+          Auth::class => AuthFactory::class,
+          AuthAdapter::class => AuthAdapterFactory::class,
+          AuthenticationService::class => AuthenticationServiceFactory::class,
       ],
     ],
     'view_manager' => [
+        'default_template_suffix' => 'phtml',
         'template_path_stack' => [
             __DIR__ . '/../view',
         ],

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Application;
 
 use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
@@ -16,17 +15,7 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
-            'application' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/application[/:action]',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
+                        'controller' => Controller\IndexController::class,
                         'action'     => 'index',
                     ],
                 ],
@@ -35,7 +24,7 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            Controller\AuthController::class => InvokableFactory::class,
+            Controller\IndexController::class => InvokableFactory::class,
         ],
     ],
     'view_manager' => [

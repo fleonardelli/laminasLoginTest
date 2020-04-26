@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Auth\Controller;
 
 use Auth\Form\LoginForm;
-use Auth\Service\User;
+use Auth\Service\Auth;
+use Laminas\Authentication\Result;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 
@@ -16,21 +17,23 @@ use Laminas\View\Model\ViewModel;
  */
 class AuthController extends AbstractActionController
 {
-    /** @var User */
-    protected $userService;
+    /** @var Auth */
+    protected $authService;
+
 
     /**
      * AuthController constructor.
      *
-     * @param User $userService
+     * @param Auth $userService
      */
-    public function __construct(User $userService)
+    public function __construct(Auth $userService)
     {
-        $this->userService = $userService;
+        $this->authService = $userService;
     }
 
     /**
-     * @return \Laminas\Http\Response
+     * @return \Laminas\Http\Response|ViewModel
+     * @throws \Auth\Exception\UserNotLoggedInException
      */
     public function loginAction()
     {
@@ -43,13 +46,14 @@ class AuthController extends AbstractActionController
             if($form->isValid()) {
                 $data = $form->getData();
 
-                try {
-                     $user = $this->userService->getUserByUserPass($data['email'], $data['password']);
+                 $result = $this->authService->login($data['email'], $data['password']);
 
-                     return $this->redirect()->toRoute('admin', ['action'=> 'index']);
-                } catch(\Exception $e) {
-                    $this->flashMessenger()->addMessage($e->getMessage(), 'error');
-                }
+                 if ($result->getCode() == Result::SUCCESS) {
+
+                     return $this->redirect()->toRoute('application', ['action'=> 'index']);
+                 }
+
+                 $this->flashMessenger()->addMessage($result->getMessages(), 'error');
 
             } else {
                 foreach ($form->getMessages() as $errorKey => $errorMessage) {

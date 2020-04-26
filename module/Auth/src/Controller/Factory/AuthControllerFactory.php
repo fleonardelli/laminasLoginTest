@@ -3,7 +3,7 @@
 
 namespace Auth\Controller\Factory;
 
-use Auth\Service\User;
+use Auth\Service\Auth;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Auth\Controller\AuthController;
@@ -21,11 +21,11 @@ class AuthControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array|null         $options
      *
-     * @return User|object
+     * @return Auth|object
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $userService = $container->get(User::class);
+        $userService = $container->get(Auth::class);
 
         return new AuthController($userService);
     }
