@@ -1,7 +1,7 @@
 CREATE TABLE `user`
 (
     id         INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    username   VARCHAR(100) NOT NULL,
+    username   VARCHAR(100) NOT NULL UNIQUE KEY,
     password   VARCHAR(150) NOT NULL,
     last_login DATETIME DEFAULT NULL
 );

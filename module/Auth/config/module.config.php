@@ -1,18 +1,14 @@
 <?php
 
-/**
- * @see       https://github.com/laminas/laminas-mvc-skeleton for the canonical source repository
- * @copyright https://github.com/laminas/laminas-mvc-skeleton/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas/laminas-mvc-skeleton/blob/master/LICENSE.md New BSD License
- */
-
 declare(strict_types=1);
 
 namespace Auth;
 
+use Auth\Controller\Factory\AuthControllerFactory;
+use Auth\Service\Factory\UserFactory;
+use Auth\Service\User;
 use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
-use Laminas\ServiceManager\Factory\InvokableFactory;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 
 return [
     'router' => [
@@ -31,12 +27,31 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            Controller\AuthController::class => InvokableFactory::class,
+            Controller\AuthController::class => AuthControllerFactory::class,
         ],
+    ],
+    'service_manager' => [
+      'factories' => [
+          User::class => UserFactory::class,
+      ],
     ],
     'view_manager' => [
         'template_path_stack' => [
             __DIR__ . '/../view',
         ],
     ],
+    'doctrine' => [
+        'driver' => [
+            'auth_driver' => [
+                'class' => AnnotationDriver::class,
+                'cache' => 'array',
+                'paths' => [__DIR__ . '/../src/Entity']
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    'Auth\Entity' => 'auth_driver',
+                ],
+            ],
+        ],
+    ]
 ];
