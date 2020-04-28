@@ -1,44 +1,48 @@
 <?php
 
 
-namespace Auth\Form;
+namespace Application\Form;
 
 use Laminas\Form\Form;
 use Laminas\Form\Element;
 use Laminas\Validator\Hostname;
 
 /**
- * Class LoginForm
+ * Class ContentForm
  *
  * @package Auth\Form
  */
-class LoginForm extends Form
+class ContentForm extends Form
 {
     /**
-     * LoginForm constructor.
+     * ContentForm constructor.
      */
     public function __construct()
     {
         parent::__construct();
 
         $this->add([
-            'type' => Element\Email::class,
-            'name' => 'email',
+            'type' => Element\Text::class,
+            'name' => 'title',
             'options' => [
-                'label' => 'Email',
-            ],
-            'attributes' => [
-                'class' => 'form-control'
-            ],
-        ]);
-        $this->add([
-            'type' => Element\Password::class,
-            'name' => 'password',
-            'options' => [
-                'label' => 'Password',
+                'label' => 'Title',
             ],
             'attributes' => [
                 'class' => 'form-control',
+                'maxlength' => '150',
+                'required' => true
+            ],
+        ]);
+        $this->add([
+            'type' => Element\Textarea::class,
+            'name' => 'text',
+            'options' => [
+                'label' => 'Content',
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+                'maxlength' => '255',
+                'required' => true
             ],
         ]);
         $this->add([
@@ -61,38 +65,28 @@ class LoginForm extends Form
         $inputFilter = $this->getInputFilter();
 
         $inputFilter->add([
-            'name'     => 'email',
+            'name'     => 'title',
             'required' => true,
-            'filters'  => [
-                ['name' => 'StringTrim'],
-            ],
             'validators' => [
-                [
-                    'name' => 'EmailAddress',
-                    'options' => [
-                        'allow' => Hostname::ALLOW_DNS,
-                        'useMxCheck' => false,
-                    ],
-                ],
                 [
                     'name' => 'StringLength',
                     'options' => [
                         'min' => 1,
-                        'max' => 100
+                        'max' => 150
                     ],
                 ],
             ],
         ]);
 
         $inputFilter->add([
-            'name'     => 'password',
+            'name'     => 'text',
             'required' => true,
             'validators' => [
                 [
                     'name' => 'StringLength',
                     'options' => [
                         'min' => 1,
-                        'max' => 12
+                        'max' => 255
                     ],
                 ],
             ],

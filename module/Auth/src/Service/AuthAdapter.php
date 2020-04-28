@@ -6,6 +6,7 @@ namespace Auth\Service;
 
 use Auth\Entity\User as UserEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Authentication\Result;
 use Laminas\Crypt\Password\Bcrypt;
@@ -25,6 +26,8 @@ class AuthAdapter implements AdapterInterface
     private $entityManager;
     /** @var Bcrypt */
     private $bCrypt;
+    /** @var ObjectRepository  */
+    private $repository;
 
     /**
      * AuthAdapter constructor.
@@ -35,6 +38,7 @@ class AuthAdapter implements AdapterInterface
     public function __construct(EntityManagerInterface $entityManager, Bcrypt $bCrypt)
     {
         $this->entityManager = $entityManager;
+        $this->repository = $entityManager->getRepository(UserEntity::class);
         $this->bCrypt = $bCrypt;
     }
 
@@ -59,10 +63,8 @@ class AuthAdapter implements AdapterInterface
      */
     public function authenticate(): Result
     {
-        $repository = $this->entityManager->getRepository(UserEntity::class);
-
         /** @var UserEntity $user */
-        $user = $repository->findOneBy(['username' => $this->username]);
+        $user = $this->repository->findOneBy(['username' => $this->username]);
 
         if (null == $user) {
             return new Result(
@@ -82,7 +84,7 @@ class AuthAdapter implements AdapterInterface
 
         return new Result(
             Result::SUCCESS,
-            $this->username,
+            $user,
             ['Successful authentication']
         );
     }

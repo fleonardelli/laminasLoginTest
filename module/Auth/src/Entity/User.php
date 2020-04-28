@@ -3,7 +3,9 @@
 
 namespace Auth\Entity;
 
+use Application\Entity\Content;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * @ORM\Entity
@@ -40,6 +42,14 @@ class User
      * @ORM\Column(name="last_login")
      */
     private $lastLogin;
+
+    /**
+     * @var PersistentCollection|Content[]
+     *
+     * @ORM\OneToMany(targetEntity="Application\Entity\Content", mappedBy="user",
+     *     cascade={"persist", "remove"})
+     */
+    private $contents;
 
     /**
      * @return int
@@ -95,6 +105,22 @@ class User
     public function setLastLogin(\DateTime $lastLogin): void
     {
         $this->lastLogin = $lastLogin;
+    }
+
+    /**
+     * @return Content[]|PersistentCollection
+     */
+    public function getContents()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * @param Content[]|PersistentCollection $contents
+     */
+    public function setContents($contents): void
+    {
+        $this->contents = $contents;
     }
 
 }

@@ -8,7 +8,6 @@ use Auth\Exception\UserNotLoggedInException;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Result;
-use Laminas\Config\Config;
 
 /**
  * Class Auth
@@ -17,11 +16,8 @@ use Laminas\Config\Config;
  */
 class Auth
 {
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
     /** @var AuthenticationService */
-    private $authService;
+    private $authenticationService;
 
     /** @var array  */
     private $config;
@@ -29,17 +25,14 @@ class Auth
     /**
      * Auth constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param AuthenticationService  $authService
-     * @param array                  $config
+     * @param AuthenticationService $authenticationService
+     * @param array                 $config
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        AuthenticationService $authService,
+        AuthenticationService $authenticationService,
         array $config
     ) {
-        $this->entityManager = $entityManager;
-        $this->authService = $authService;
+        $this->authenticationService = $authenticationService;
         $this->config = $config;
     }
 
@@ -52,15 +45,15 @@ class Auth
      */
     public function login(string $username, string $password): Result
     {
-        if (null != $this->authService->getIdentity()) {
+        if (null != $this->authenticationService->getIdentity()) {
             throw new UserLoggedInException('User is already logged in');
         }
 
-        $authAdapter = $this->authService->getAdapter();
+        $authAdapter = $this->authenticationService->getAdapter();
         $authAdapter->setUsername($username);
         $authAdapter->setPassword($password);
 
-        return $this->authService->authenticate($authAdapter);
+        return $this->authenticationService->authenticate($authAdapter);
     }
 
     /**
@@ -68,11 +61,11 @@ class Auth
      */
     public function logout(): void
     {
-        if (null == $this->authService->getIdentity()) {
+        if (null == $this->authenticationService->getIdentity()) {
             throw new UserNotLoggedInException('The user is not logged in');
         }
 
-        $this->authService->clearIdentity();
+        $this->authenticationService->clearIdentity();
     }
 
 
@@ -109,7 +102,7 @@ class Auth
                     if ('*' == $allow)
 
                         return true;
-                    else if ('@' == $allow && $this->authService->hasIdentity()) {
+                    else if ('@' == $allow && $this->authenticationService->hasIdentity()) {
 
                         return true;
                     } else {
@@ -120,7 +113,7 @@ class Auth
             }
         }
 
-        if ('restrictive' == $mode && !$this->authService->hasIdentity()) {
+        if ('restrictive' == $mode && !$this->authenticationService->hasIdentity()) {
 
             return false;
         }

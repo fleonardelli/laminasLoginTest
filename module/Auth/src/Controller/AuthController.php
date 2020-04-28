@@ -47,7 +47,7 @@ class AuthController extends AbstractActionController
                 $data = $form->getData();
 
                  try {
-                    $result = $this->authService->login($data['email'], $data['password']);
+                     $result = $this->authService->login($data['email'], $data['password']);
 
                      if ($result->getCode() == Result::SUCCESS) {
 
