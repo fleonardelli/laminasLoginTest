@@ -3,6 +3,7 @@
 
 namespace Auth\Service;
 
+use Auth\Exception\UserLoggedInException;
 use Auth\Exception\UserNotLoggedInException;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Authentication\AuthenticationService;
@@ -47,12 +48,12 @@ class Auth
      * @param string $password
      *
      * @return Result
-     * @throws UserNotLoggedInException
+     * @throws UserLoggedInException
      */
     public function login(string $username, string $password): Result
     {
         if (null != $this->authService->getIdentity()) {
-            throw new UserNotLoggedInException('User is already logged in');
+            throw new UserLoggedInException('User is already logged in');
         }
 
         $authAdapter = $this->authService->getAdapter();

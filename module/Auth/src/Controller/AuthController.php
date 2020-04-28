@@ -33,10 +33,10 @@ class AuthController extends AbstractActionController
 
     /**
      * @return \Laminas\Http\Response|ViewModel
-     * @throws \Auth\Exception\UserNotLoggedInException
      */
     public function loginAction()
     {
+        $errors = [];
         $form = new LoginForm();
 
         if ($this->getRequest()->isPost()) {
@@ -46,25 +46,30 @@ class AuthController extends AbstractActionController
             if($form->isValid()) {
                 $data = $form->getData();
 
-                 $result = $this->authService->login($data['email'], $data['password']);
+                 try {
+                    $result = $this->authService->login($data['email'], $data['password']);
 
-                 if ($result->getCode() == Result::SUCCESS) {
+                     if ($result->getCode() == Result::SUCCESS) {
 
-                     return $this->redirect()->toRoute('home', ['action'=> 'index']);
+                         return $this->redirect()->toRoute('home', ['action'=> 'index']);
+                     }
+
+                     $errors[] = $result->getMessages();
+
+                 } catch (\Exception $e) {
+                     $errors[] = $e->getMessage();
                  }
-
-                 $this->flashMessenger()->addMessage($result->getMessages(), 'error');
-
             } else {
                 foreach ($form->getMessages() as $errorKey => $errorMessage) {
                     $message = sprintf('%s: %s', $errorKey, current($errorMessage));
-                    $this->flashMessenger()->addMessage($message, 'error');
+                    $errors[] = $message;
                 }
             }
         }
 
         return new ViewModel([
-            'form' => $form
+            'form' => $form,
+            'errors' => $errors
         ]);
     }
 }

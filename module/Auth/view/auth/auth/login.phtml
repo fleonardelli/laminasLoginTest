@@ -4,8 +4,6 @@ $form = $this->form;
 $form->prepare();
 ?>
 
-
-
 <div class="container">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
@@ -24,8 +22,11 @@ $form->prepare();
                         <?= $this->formElement($form->get('submit')); ?>
                     <?= $this->form()->closeTag(); ?>
                     <div>
-
-                    <?= $this->flashMessenger()->render('error', ['alert-danger mt-3 p-1']); ?>
+                        <?php
+                        foreach ($this->errors as $error) {
+                            echo "<div class='alert-danger mt-3 p-1'>{$error}</div>";
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
