@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AuthTest\Controller;
 
-use Application\Controller\AuthController;
+use Auth\Controller\AuthController;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -25,4 +25,18 @@ class AuthControllerTest extends AbstractHttpControllerTestCase
 
         parent::setUp();
     }
+
+    /**
+     * @test
+     */
+    public function loginActionShouldBeAccessible(): void
+    {
+        $this->dispatch('/login', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName('auth');
+        $this->assertControllerName(AuthController::class);
+        $this->assertControllerClass('AuthController');
+        $this->assertMatchedRouteName('login');
+    }
+
 }
