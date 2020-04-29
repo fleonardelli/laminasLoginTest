@@ -4,9 +4,6 @@
         <testsuite name="Laminas MVC Skeleton Test Suite">
             <directory>./module/Application/test</directory>
         </testsuite>
-        <testsuite name="Auth">
-            <directory>./module/Auth/test</directory>
-        </testsuite>
         <testsuite name="ApplicationUnit">
             <directory>./module/Application/test/Unit/Service</directory>
         </testsuite>

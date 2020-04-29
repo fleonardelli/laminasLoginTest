@@ -34,6 +34,8 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionCanBeAccessed()
     {
+        //This test is failing because of a new way of using Module.php, instead of getting the services,
+        //it should use providers.
         $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertModuleName('application');
