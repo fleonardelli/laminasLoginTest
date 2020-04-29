@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Auth\Controller;
 
 use Application\Entity\ErrorMessage;
+use Application\Service\Content;
 use Application\Service\MessageBag;
 use Auth\Form\LoginForm;
 use Auth\Service\Auth;
@@ -25,16 +26,20 @@ class AuthController extends AbstractActionController
     /** @var MessageBag */
     protected $messageBag;
 
+    /** @var Content  */
+    protected $contentService;
+
     /**
      * AuthController constructor.
      *
      * @param Auth       $userService
      * @param MessageBag $messageBag
      */
-    public function __construct(Auth $userService, MessageBag $messageBag)
+    public function __construct(Auth $userService, MessageBag $messageBag, Content $contentService)
     {
         $this->authService = $userService;
         $this->messageBag = $messageBag;
+        $this->contentService = $contentService;
     }
 
     /**
@@ -76,7 +81,8 @@ class AuthController extends AbstractActionController
 
         return new ViewModel([
             'form' => $form,
-            'errors' => $this->messageBag->getErrorMessages()
+            'errors' => $this->messageBag->getErrorMessages(),
+            'content' => $this->contentService->fetchAll(),
         ]);
     }
 

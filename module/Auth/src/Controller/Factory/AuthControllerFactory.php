@@ -3,6 +3,7 @@
 
 namespace Auth\Controller\Factory;
 
+use Application\Service\Content;
 use Application\Service\MessageBag;
 use Auth\Service\Auth;
 use Interop\Container\ContainerInterface;
@@ -28,8 +29,9 @@ class AuthControllerFactory implements FactoryInterface
     {
         $userService = $container->get(Auth::class);
         $messageBag = $container->get(MessageBag::class);
+        $contentService = $container->get(Content::class);
 
-        return new AuthController($userService, $messageBag);
+        return new AuthController($userService, $messageBag, $contentService);
     }
 
 }

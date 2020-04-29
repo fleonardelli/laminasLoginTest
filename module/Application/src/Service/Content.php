@@ -53,4 +53,14 @@ class Content
         return $content->getId();
     }
 
+    /**
+     * @return ContentEntity[]
+     */
+    public function fetchAll(): array
+    {
+        return $this->entityManager
+            ->getRepository(ContentEntity::class)
+            ->findAll();
+    }
+
 }
