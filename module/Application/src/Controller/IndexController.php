@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Application\Controller;
 
+use Application\Entity\ErrorMessage;
+use Application\Entity\InfoMessage;
 use Application\Form\ContentForm;
 use Application\Service\Content;
+use Application\Service\MessageBag;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
@@ -21,17 +24,24 @@ class IndexController extends AbstractActionController
     protected $contentService;
     /** @var AuthenticationService */
     protected $authenticationService;
+    /** @var MessageBag */
+    protected $messageBag;
 
     /**
      * IndexController constructor.
      *
      * @param Content               $contentService
      * @param AuthenticationService $authenticationService
+     * @param MessageBag            $messageBag
      */
-    public function __construct(Content $contentService, AuthenticationService $authenticationService)
-    {
+    public function __construct(
+        Content $contentService,
+        AuthenticationService $authenticationService,
+        MessageBag $messageBag
+    ) {
         $this->contentService = $contentService;
         $this->authenticationService = $authenticationService;
+        $this->messageBag = $messageBag;
     }
 
     /**
@@ -39,10 +49,6 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        //TODO: Create service based solution.
-        $errors = [];
-        $messages = [];
-
         $user = $this->authenticationService->getIdentity();
         $form = new ContentForm();
 
@@ -53,11 +59,15 @@ class IndexController extends AbstractActionController
             if($form->isValid()) {
                 $data = $form->getData();
                 $contentId = $this->contentService->create($data['title'], $data['text'], $user);
-                $messages[] = "Content created successfully with id: {$contentId}";
+                $this->messageBag->addMessage(
+                    "Content created successfully with id: {$contentId}",
+                    InfoMessage::TYPE
+                );
+
             } else {
                 foreach ($form->getMessages() as $errorKey => $errorMessage) {
                     $message = sprintf('%s: %s', $errorKey, current($errorMessage));
-                    $errors[] = $message;
+                    $this->messageBag->addMessage($message, ErrorMessage::TYPE);
                 }
             }
         }
@@ -65,8 +75,7 @@ class IndexController extends AbstractActionController
         return new ViewModel([
             'form' => $form,
             'username' => $user->getUsername() ?? '',
-            'errors' => $errors,
-            'messages' => $messages,
+            'messages' => $this->messageBag->getMessages(),
         ]);
     }
 }

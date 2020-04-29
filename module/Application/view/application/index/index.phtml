@@ -3,7 +3,8 @@
 /** @var $form \Application\Form\ContentForm */
 $form = $this->form;
 $form->prepare();
-?>
+
+use Application\Entity\ErrorMessage; ?>
 <div class="jumbotron">
     <h1 class="display-4">Welcome <?= $username ?>!</h1>
 </div>
@@ -25,12 +26,11 @@ $form->prepare();
             <?= $this->form()->closeTag(); ?>
             <?php
             foreach ($this->messages as $message) {
-                echo "<div class='alert-success mt-3 p-1'>{$message}</div>";
-            }
-            ?>
-            <?php
-            foreach ($this->error as $error) {
-                echo "<div class='alert-success mt-3 p-1'>{$error}</div>";
+                $alertType = $message->getType() == ErrorMessage::TYPE
+                    ? 'danger'
+                    : 'success';
+
+                echo "<div class='alert-{$alertType} mt-3 p-1'>{$message->getMessage()}</div>";
             }
             ?>
         </div>

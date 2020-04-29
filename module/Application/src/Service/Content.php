@@ -7,7 +7,6 @@ namespace Application\Service;
 use Application\Entity\Content as ContentEntity;
 use Auth\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 
 /**
  * Class Content

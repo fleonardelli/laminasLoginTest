@@ -70,6 +70,8 @@ class Auth
 
 
     /**
+     * Filter access to certain routes, for logged in users.
+     *
      * @param string $controllerName
      * @param string $actionName
      *
