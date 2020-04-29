@@ -24,7 +24,7 @@ $form->prepare();
                     <div>
                         <?php
                         foreach ($this->errors as $error) {
-                            echo "<div class='alert-danger mt-3 p-1'>{$error}</div>";
+                            echo "<div class='alert-danger mt-3 p-1'>{$error->getMessage()}</div>";
                         }
                         ?>
                     </div>

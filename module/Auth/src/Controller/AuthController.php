@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Auth\Controller;
 
+use Application\Entity\ErrorMessage;
+use Application\Service\MessageBag;
 use Auth\Form\LoginForm;
 use Auth\Service\Auth;
 use Laminas\Authentication\Result;
@@ -20,15 +22,19 @@ class AuthController extends AbstractActionController
     /** @var Auth */
     protected $authService;
 
+    /** @var MessageBag */
+    protected $messageBag;
 
     /**
      * AuthController constructor.
      *
-     * @param Auth $userService
+     * @param Auth       $userService
+     * @param MessageBag $messageBag
      */
-    public function __construct(Auth $userService)
+    public function __construct(Auth $userService, MessageBag $messageBag)
     {
         $this->authService = $userService;
+        $this->messageBag = $messageBag;
     }
 
     /**
@@ -36,7 +42,6 @@ class AuthController extends AbstractActionController
      */
     public function loginAction()
     {
-        $errors = [];
         $form = new LoginForm();
 
         if ($this->getRequest()->isPost()) {
@@ -54,22 +59,35 @@ class AuthController extends AbstractActionController
                          return $this->redirect()->toRoute('home', ['action'=> 'index']);
                      }
 
-                     $errors[] = $result->getMessages();
+                     foreach ($result->getMessages() as $message) {
+                         $this->messageBag->addMessage($message, ErrorMessage::TYPE);
+                     }
 
                  } catch (\Exception $e) {
-                     $errors[] = $e->getMessage();
+                     $this->messageBag->addMessage($e->getMessage(), ErrorMessage::TYPE);
                  }
             } else {
                 foreach ($form->getMessages() as $errorKey => $errorMessage) {
                     $message = sprintf('%s: %s', $errorKey, current($errorMessage));
-                    $errors[] = $message;
+                    $this->messageBag->addMessage($message, ErrorMessage::TYPE);
                 }
             }
         }
 
         return new ViewModel([
             'form' => $form,
-            'errors' => $errors
+            'errors' => $this->messageBag->getErrorMessages()
         ]);
+    }
+
+    /**
+     * @return \Laminas\Http\Response
+     * @throws \Auth\Exception\UserNotLoggedInException
+     */
+    public function logoutAction()
+    {
+        $this->authService->logout();
+
+        return $this->redirect()->toRoute('login');
     }
 }
