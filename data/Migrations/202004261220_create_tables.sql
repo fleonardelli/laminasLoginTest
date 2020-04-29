@@ -1,3 +1,5 @@
+-- I could have done a command to run the migrations here.
+
 CREATE TABLE `user`
 (
     id         INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
